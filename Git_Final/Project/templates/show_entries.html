@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="container">
+  <div class="row">
+  <div class="col-md-4">
+
+<form class="form-inline" method="POST" action="">
+  <div class="form-group">
+    <div class="input-group">
+        <span class="input-group-addon">Please select load curve:</span>
+            <select name="prof_select" class="selectpicker form-control">
+              {% for o in data %}
+              <option value="{{ o.name }}">{{ o.name }}</option>
+              {% endfor %}
+            </select>
+    </div>
+    <button type="submit" class="btn btn-default">Go</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+<thead>
+<tr>
+<th>Customer ID</th>
+<th>Customer Address</th>
+</tr>
+</thead>
+<tbody>
+{% for entry in entries %}
+<tr>
+<td>{{ entry.resident_id|safe }}</td>
+<td>{{ entry.address|safe }}</td>
+</tr>
+  {% else %}
+<tr>
+<td>Please make a selection!</td>
+</tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+</div>
+  <div class="col-md-8">
+  <div id="map" style="width: 100%; height: 500px"> </div>
+  </div>
+</div>
+  </div>
+</div>
+  <script src='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js'></script>
+
+ <script>
+L.mapbox.accessToken = 'pk.eyJ1Ijoiamh1c3NtYW4iLCJhIjoiY2oyN3N3MXIyMDAwMTJ3bWtvcmRpdWIyciJ9.h8IlVxAg3fosXRfiE1W39Q';
+var map = L.mapbox.map('map', 'mapbox.streets', {
+  // the options here prevent mouse wheel or trackpad scrolling
+  // and restrict the zooms to zoom levels 14 through 18
+  scrollWheelZoom: true,
+  maxZoom: 20,
+  minZoom: 5
+}).setView([29.986325,-96.3957767], 10);
+</script>
+
+<span id="markers" style="display: none"> {{markers}} </span>
+
+<script>
+var markerString = document.getElementById('markers').innerHTML;
+var marker = JSON.parse(markerString);
+
+marker.forEach(function(m) {
+  new L.marker()
+  .setLatLng([parseFloat(m.lat), parseFloat(m.lon)])
+  .bindPopup("Customer " + m.rid + " - " + m.address)
+  .addTo(map);
+});
+</script>
+
+
+{% endblock %}
+
+
+
+
+
